@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="Assets/banner.png" alt="AndroidDeck Banner" width="100%" />
+  <img src="Assets/AndroidDeckB.png" alt="AndroidDeck Banner" width="100%" />
 </div>
 
 # AndroidDeck
