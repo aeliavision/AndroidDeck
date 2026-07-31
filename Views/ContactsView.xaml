@@ -1,0 +1,382 @@
+<UserControl x:Class="VcfEditor.Views.ContactsView"
+             x:Name="Root"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:models="clr-namespace:VcfEditor.Models"
+             xmlns:behaviors="clr-namespace:VcfEditor.Behaviors"
+             mc:Ignorable="d"
+             behaviors:ResponsiveLayoutBehavior.IsEnabled="True"
+             Tag="{Binding Path=(behaviors:ResponsiveLayoutBehavior.Mode), RelativeSource={RelativeSource Self}}"
+             Background="{DynamicResource Brush.Background}">
+    <DockPanel x:Name="MainGrid" Margin="{StaticResource PageMargin}">
+        <Border DockPanel.Dock="Top" Style="{StaticResource PageHeaderPanel}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="Contacts" Style="{StaticResource PageTitleText}"
+                               AutomationProperties.HeadingLevel="Level1" />
+                    <TextBlock Text="{Binding SourceStatusText, StringFormat=Source: {0}}"
+                               Style="{StaticResource PageSubtitleText}" />
+                </StackPanel>
+                <TextBlock Grid.Column="1" Text="{Binding StatusMessage}"
+                           Style="{StaticResource CaptionText}" VerticalAlignment="Center"
+                           TextWrapping="Wrap" MaxWidth="360"
+                           AutomationProperties.LiveSetting="Polite" />
+            </Grid>
+        </Border>
+
+        <Border DockPanel.Dock="Top" Style="{StaticResource CommandBarPanel}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0" MinWidth="220">
+                     <TextBox x:Name="SearchTextBox"
+                             Style="{StaticResource ModernTextBox}"
+                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                             Padding="34,7,36,7"
+                             AutomationProperties.Name="Search contacts" />
+                    <TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets"
+                               Foreground="{DynamicResource Brush.TextSecondary}"
+                               HorizontalAlignment="Left" VerticalAlignment="Center" Margin="11,0,0,0"
+                               IsHitTestVisible="False" />
+                    <Button Content="&#xE711;" FontFamily="Segoe MDL2 Assets"
+                            HorizontalAlignment="Right" Width="34" Height="34" Margin="0"
+                            Style="{StaticResource IconButton}" Click="ClearSearch_Click"
+                            Visibility="{Binding HasSearchText, Converter={StaticResource BoolToVisibilityConverter}}"
+                            AutomationProperties.Name="Clear contact search" />
+                </Grid>
+
+                <ComboBox x:Name="SearchFilterComboBox" Grid.Column="1" Margin="10,0,0,0"
+                          MinWidth="126" SelectedIndex="{Binding SearchFilterIndex, Mode=TwoWay}"
+                          Style="{StaticResource ModernComboBox}"
+                          AutomationProperties.Name="Contact search field">
+                    <ComboBoxItem Content="All fields" />
+                    <ComboBoxItem Content="Name" />
+                    <ComboBoxItem Content="Phone" />
+                    <ComboBoxItem Content="Organization" />
+                </ComboBox>
+
+                <Button x:Name="AddContactButton" Grid.Column="2" Content="New contact"
+                        Command="{Binding Actions.AddContactCommand, ElementName=Root}"
+                        Style="{StaticResource PrimaryCommandButton}" Margin="10,0,0,0"
+                        AutomationProperties.Name="Create a new contact" />
+
+                <Button Grid.Column="3" Content="More" behaviors:ButtonContextMenuBehavior.IsEnabled="True" Tag="{Binding ElementName=Root}"
+                        Style="{StaticResource ContextCommandButton}" Margin="8,0,0,0"
+                        AutomationProperties.Name="More contact actions">
+                    <Button.ContextMenu>
+                        <ContextMenu DataContext="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource Self}}">
+                            <MenuItem Header="Open VCF…" Command="{Binding Actions.OpenFileCommand}" />
+                            <MenuItem Header="Save or export" Command="{Binding Actions.SaveFileCommand}" />
+                            <MenuItem x:Name="RtlMenuItem" Header="Right-to-left layout" IsCheckable="True" Click="RtlMenuItem_Click" />
+                            <Separator />
+                            <MenuItem Header="Edit selected" Command="{Binding Actions.EditContactsCommand}" />
+                            <MenuItem Header="Delete selected" Command="{Binding Actions.DeleteContactsCommand}" />
+                            <Separator />
+                            <MenuItem Header="Connect phone" Command="{Binding Actions.ConnectPhoneCommand}" />
+                            <MenuItem Header="Refresh phone contacts" Command="{Binding Actions.RefreshPhoneCommand}" />
+                            <MenuItem Header="Disconnect phone" Command="{Binding Actions.DisconnectPhoneCommand}" />
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+
+                <!-- Named compatibility controls used by the presentation layer. -->
+                <StackPanel Visibility="Collapsed">
+                    <Button x:Name="OpenFileButton" Command="{Binding Actions.OpenFileCommand, ElementName=Root}" />
+                    <Button x:Name="SaveFileButton" Command="{Binding Actions.SaveFileCommand, ElementName=Root}" />
+                    <Button x:Name="EditContactButton" Command="{Binding Actions.EditContactsCommand, ElementName=Root}" />
+                    <Button x:Name="DeleteContactButton" Command="{Binding Actions.DeleteContactsCommand, ElementName=Root}" />
+                    <ToggleButton x:Name="RtlToggleButton" Click="RtlToggleButton_Click" />
+                    <Button x:Name="ConnectPhoneButton" Command="{Binding Actions.ConnectPhoneCommand, ElementName=Root}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Border x:Name="PhoneConnectionBanner" DockPanel.Dock="Top"
+                Style="{StaticResource StatusBanner.Warning}" Visibility="Collapsed">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="PhoneConnectionBannerText" TextWrapping="Wrap"
+                           Foreground="{DynamicResource Brush.TextPrimary}" VerticalAlignment="Center" />
+                <Button x:Name="RetryPhoneConnectionButton" Grid.Column="1" Content="Retry"
+                        Click="RetryPhoneConnection_Click" Style="{StaticResource ContextCommandButton}"
+                        Margin="12,0,0,0" AutomationProperties.Name="Retry phone connection" />
+            </Grid>
+        </Border>
+
+        <Border x:Name="SourceIndicatorBar" DockPanel.Dock="Top" Style="{StaticResource StatusBanner}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Ellipse x:Name="ConnectionDot" Width="9" Height="9" Margin="0,0,10,0"
+                         Fill="{DynamicResource Brush.TextSecondary}" VerticalAlignment="Center">
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Setter Property="Fill" Value="{DynamicResource Brush.TextSecondary}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ActiveSource}" Value="{x:Static models:ContactSource.AndroidPhone}">
+                                    <Setter Property="Fill" Value="{DynamicResource Brush.Success}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding SourceStatusText}" FontWeight="SemiBold" />
+                    <TextBlock x:Name="DeviceInfoText" Style="{StaticResource CaptionText}" Margin="8,0,0,0" />
+                </StackPanel>
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <Button x:Name="RefreshPhoneButton" Content="Refresh"
+                            Command="{Binding Actions.RefreshPhoneCommand, ElementName=Root}"
+                            Style="{StaticResource ContextCommandButton}" Margin="0,0,8,0" />
+                    <Button x:Name="DisconnectButton" Content="Disconnect"
+                            Command="{Binding Actions.DisconnectPhoneCommand, ElementName=Root}"
+                            Style="{StaticResource ContextCommandButton}" Margin="0" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid x:Name="WorkspaceGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="6" />
+                <ColumnDefinition x:Name="DetailsColumn" Width="380" />
+            </Grid.ColumnDefinitions>
+
+            <Border x:Name="ContactListPanel" Grid.Column="0" Style="{StaticResource ModernCard}" Padding="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid Margin="14,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="SelectionSummaryText"
+                                   Text="No contacts selected · Ctrl+click selects multiple · Enter edits · Delete removes"
+                                   Style="{StaticResource CaptionText}" TextWrapping="Wrap" />
+                        <ToggleButton Grid.Column="1" Content="RTL" x:Name="VisibleRtlToggle"
+                                      Click="VisibleRtlToggle_Click" Style="{StaticResource SecondaryToggleButton}"
+                                      AutomationProperties.Name="Toggle right-to-left contact layout" />
+                    </Grid>
+
+                    <Grid Grid.Row="1">
+                        <ListView x:Name="ContactsListView"
+                                  ItemsSource="{Binding ContactsView}"
+                                  SelectionMode="Extended"
+                                  SelectionChanged="ContactsListView_SelectionChanged"
+                                  PreviewKeyDown="ContactsListView_PreviewKeyDown"
+                                  MouseDoubleClick="ContactsListView_MouseDoubleClick"
+                                  BorderThickness="0"
+                                  Background="Transparent"
+                                  ScrollViewer.CanContentScroll="True"
+                                  VirtualizingPanel.IsVirtualizing="True"
+                                  VirtualizingPanel.VirtualizationMode="Standard"
+                                  KeyboardNavigation.TabNavigation="Once"
+                                  AutomationProperties.Name="Contacts list">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem" BasedOn="{StaticResource ModernListViewItem}">
+                                    <Setter Property="AutomationProperties.Name" Value="{Binding FullName}" />
+                                    <Setter Property="MinHeight" Value="44" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn x:Name="NameColumn" Width="280">
+                                        <GridViewColumn.Header>
+                                            <GridViewColumnHeader Content="Name" Tag="FullName" Click="ColumnHeader_Click" />
+                                        </GridViewColumn.Header>
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding FullName}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn x:Name="PhoneColumn" Width="160" Header="Phone"
+                                                    DisplayMemberBinding="{Binding PrimaryPhoneNumber}" />
+                                    <GridViewColumn x:Name="OrganizationColumn" Width="190" Header="Organization"
+                                                    DisplayMemberBinding="{Binding Organization}" />
+                                    <GridViewColumn x:Name="EmailColumn" Width="210" Header="Email"
+                                                    DisplayMemberBinding="{Binding Email}" />
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+
+                        <Border Style="{StaticResource EmptyStatePanel}"
+                                Visibility="{Binding HasNoSource, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="420">
+                                <TextBlock Text="Open a contact source" FontWeight="SemiBold" FontSize="{StaticResource FontSize.Title}" HorizontalAlignment="Center" />
+                                <TextBlock Text="Open a VCF file or connect your Android phone to begin."
+                                           Style="{StaticResource BodyText}" TextAlignment="Center" TextWrapping="Wrap" Margin="0,8,0,16" />
+                                <WrapPanel HorizontalAlignment="Center">
+                                    <Button Content="Open VCF" Command="{Binding Actions.OpenFileCommand, ElementName=Root}"
+                                            Style="{StaticResource PrimaryCommandButton}" />
+                                    <Button Content="Connect phone" Command="{Binding Actions.ConnectPhoneCommand, ElementName=Root}"
+                                            Style="{StaticResource ContextCommandButton}" />
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource EmptyStatePanel}"
+                                Visibility="{Binding HasNoContacts, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="No contacts in this source" FontWeight="SemiBold" FontSize="{StaticResource FontSize.Title}" />
+                                <TextBlock Text="Create a contact or choose a different source."
+                                           Style="{StaticResource CaptionText}" Margin="0,6,0,14" />
+                                <Button Content="New contact" Command="{Binding Actions.AddContactCommand, ElementName=Root}"
+                                        Style="{StaticResource PrimaryCommandButton}" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource EmptyStatePanel}"
+                                Visibility="{Binding HasNoSearchResults, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="No search results" FontWeight="SemiBold" FontSize="{StaticResource FontSize.Title}" />
+                                <TextBlock Text="Try a broader term or clear the active filter."
+                                           Style="{StaticResource CaptionText}" Margin="0,6,0,14" />
+                                <Button Content="Clear search" Click="ClearSearch_Click"
+                                        Style="{StaticResource ContextCommandButton}" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="{DynamicResource Brush.Overlay}"
+                                Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ProgressBar IsIndeterminate="True" Width="180" Height="6" />
+                                <TextBlock Text="{Binding StatusMessage}" Foreground="{DynamicResource Brush.OnInverseSurface}"
+                                           Margin="0,12,0,0" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <GridSplitter x:Name="DetailsGridSplitter" Grid.Column="1" Width="6"
+                          HorizontalAlignment="Stretch" Background="Transparent" />
+
+            <Border x:Name="DetailsPanelBorder" Grid.Column="2" Style="{StaticResource ModernCard}" Padding="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid Margin="16,14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="CompactBackButton" Content="Back" Click="CompactBackButton_Click"
+                                Style="{StaticResource ContextCommandButton}" Visibility="Collapsed"
+                                Margin="0,0,10,0" AutomationProperties.Name="Back to contacts" />
+                        <TextBlock Grid.Column="1" Text="Contact details" Style="{StaticResource TitleText}"
+                                   VerticalAlignment="Center" AutomationProperties.HeadingLevel="Level2" />
+                        <Button Grid.Column="2" Content="Edit" Command="{Binding Actions.EditContactsCommand, ElementName=Root}"
+                                Style="{StaticResource ContextCommandButton}" Margin="0,0,6,0" />
+                        <Button Grid.Column="3" Content="Delete" Command="{Binding Actions.DeleteContactsCommand, ElementName=Root}"
+                                Style="{StaticResource DestructiveCommandButton}" Margin="0"
+                                AutomationProperties.Name="Delete selected contact" />
+                    </Grid>
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="16,0,16,16">
+                        <StackPanel>
+                            <Border x:Name="SelectedContactInfo" Style="{StaticResource EmptyStatePanel}" MinHeight="160">
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock Text="Select one contact" FontWeight="SemiBold" />
+                                    <TextBlock Text="Details and phone numbers will appear here."
+                                               Style="{StaticResource CaptionText}" Margin="0,4,0,0" />
+                                </StackPanel>
+                            </Border>
+
+                            <StackPanel x:Name="ContactEditPanel" Visibility="Collapsed">
+                                <TextBlock Text="{Binding ElementName=ContactsListView, Path=SelectedItem.FullName}"
+                                           FontSize="{StaticResource FontSize.Heading}" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding ElementName=ContactsListView, Path=SelectedItem.Organization}"
+                                           Style="{StaticResource PageSubtitleText}" />
+
+                                <Grid Margin="0,18,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="110" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Text="First name" Style="{StaticResource CaptionText}" Margin="0,9" />
+                                    <TextBox Grid.Column="1" Text="{Binding ElementName=ContactsListView, Path=SelectedItem.FirstName}"
+                                             Style="{StaticResource ModernTextBox}" IsReadOnly="True" Margin="0,4" />
+                                    <TextBlock Grid.Row="1" Text="Last name" Style="{StaticResource CaptionText}" Margin="0,9" />
+                                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ElementName=ContactsListView, Path=SelectedItem.LastName}"
+                                             Style="{StaticResource ModernTextBox}" IsReadOnly="True" Margin="0,4" />
+                                    <TextBlock Grid.Row="2" Text="Email" Style="{StaticResource CaptionText}" Margin="0,9" />
+                                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ElementName=ContactsListView, Path=SelectedItem.Email}"
+                                             Style="{StaticResource ModernTextBox}" IsReadOnly="True" Margin="0,4" />
+                                    <TextBlock Grid.Row="3" Text="Title" Style="{StaticResource CaptionText}" Margin="0,9" />
+                                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ElementName=ContactsListView, Path=SelectedItem.Title}"
+                                             Style="{StaticResource ModernTextBox}" IsReadOnly="True" Margin="0,4" />
+                                </Grid>
+
+                                <Border Style="{StaticResource ModernCard}" Margin="0,18,0,0">
+                                    <StackPanel>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Phone numbers" Style="{StaticResource TitleText}" />
+                                            <WrapPanel Grid.Column="1">
+                                                <Button x:Name="AddPhoneButton" Content="Add"
+                                                        Command="{Binding Actions.AddPhoneNumberCommand, ElementName=Root}"
+                                                        Style="{StaticResource ContextCommandButton}" />
+                                                <Button x:Name="EditPhoneButton" Content="Edit"
+                                                        Command="{Binding Actions.EditPhoneNumberCommand, ElementName=Root}"
+                                                        Style="{StaticResource ContextCommandButton}" />
+                                                <Button x:Name="DeletePhoneButton" Content="Delete"
+                                                        Command="{Binding Actions.DeletePhoneNumberCommand, ElementName=Root}"
+                                                        Style="{StaticResource DestructiveCommandButton}" />
+                                            </WrapPanel>
+                                        </Grid>
+                                        <ListView x:Name="PhoneNumbersListView" MinHeight="120" Margin="0,10,0,0"
+                                                  ItemsSource="{Binding ElementName=ContactsListView, Path=SelectedItem.PhoneNumbers}"
+                                                  SelectionMode="Single" SelectionChanged="PhoneNumbersListView_SelectionChanged"
+                                                  Style="{StaticResource ModernListView}"
+                                                  ItemContainerStyle="{StaticResource ModernListViewItem}"
+                                                  AutomationProperties.Name="Phone numbers for selected contact">
+                                            <ListView.View>
+                                                <GridView>
+                                                    <GridViewColumn Header="Number" Width="170" DisplayMemberBinding="{Binding Number}" />
+                                                    <GridViewColumn Header="Type" Width="110" DisplayMemberBinding="{Binding TypeDisplayName}" />
+                                                </GridView>
+                                            </ListView.View>
+                                        </ListView>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+    </DockPanel>
+</UserControl>

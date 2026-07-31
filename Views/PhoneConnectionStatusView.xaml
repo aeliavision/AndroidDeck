@@ -1,0 +1,131 @@
+<UserControl x:Class="VcfEditor.Views.PhoneConnectionStatusView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="False">
+    <UserControl.Resources>
+        <Style x:Key="PhoneStatusPrimaryText" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource Brush.OnInverseSurface}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="PhoneStatusSecondaryText" TargetType="TextBlock" BasedOn="{StaticResource PhoneStatusPrimaryText}">
+            <Setter Property="Foreground" Value="{DynamicResource Brush.OnInverseSurfaceMuted}" />
+        </Style>
+        <Style x:Key="PhoneStatusErrorText" TargetType="TextBlock" BasedOn="{StaticResource PhoneStatusPrimaryText}">
+            <Setter Property="Foreground" Value="{DynamicResource Shell.PhoneStatusErrorTextBrush}" />
+        </Style>
+    </UserControl.Resources>
+    <Border CornerRadius="{StaticResource RadiusLg}"
+            Padding="10,8"
+            AutomationProperties.Name="{Binding PhoneStatusAutomationText}"
+            AutomationProperties.LiveSetting="Polite"
+            ToolTip="{Binding PhoneStatusAutomationText}">
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="Background" Value="{DynamicResource Shell.PhoneStatusDisconnectedBadgeBrush}" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsPhoneInError}" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource Shell.PhoneStatusErrorBadgeBrush}" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding IsPhoneBusy}" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource Shell.PhoneStatusBusyBadgeBrush}" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding IsPhoneConnected}" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource Shell.PhoneStatusConnectedBadgeBrush}" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+                        <Setter Property="BorderThickness" Value="1" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Ellipse Width="10" Height="10" Margin="0,0,9,0" VerticalAlignment="Center">
+                <Ellipse.Style>
+                    <Style TargetType="Ellipse">
+                        <Setter Property="Fill" Value="{DynamicResource Shell.PhoneStatusDisconnectedDotBrush}" />
+                        <Setter Property="HorizontalAlignment" Value="Left" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding AreNavigationLabelsVisible}" Value="False">
+                                <Setter Property="Grid.ColumnSpan" Value="2" />
+                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                <Setter Property="Margin" Value="0" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsPhoneInError}" Value="True">
+                                <Setter Property="Fill" Value="{DynamicResource Shell.PhoneStatusErrorDotBrush}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsPhoneBusy}" Value="True">
+                                <Setter Property="Fill" Value="{DynamicResource Shell.PhoneStatusBusyDotBrush}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsPhoneConnected}" Value="True">
+                                <Setter Property="Fill" Value="{DynamicResource Shell.PhoneStatusConnectedDotBrush}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                                <Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Ellipse.Style>
+            </Ellipse>
+
+            <StackPanel Grid.Column="1">
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding AreNavigationLabelsVisible}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+
+                <TextBlock Text="{Binding PhoneStatusTitle}"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           Style="{StaticResource PhoneStatusPrimaryText}" />
+                <TextBlock Text="{Binding PhoneStatusDetail}"
+                           FontSize="11"
+                           TextTrimming="CharacterEllipsis"
+                           Style="{StaticResource PhoneStatusSecondaryText}" />
+                <TextBlock Text="{Binding CapabilityError}"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Margin="0,4,0,0"
+                           AutomationProperties.LiveSetting="Assertive">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource PhoneStatusErrorText}">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CapabilityError}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding CapabilityError}" Value="">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <Button Content="Retry"
+                        Margin="0,7,0,0"
+                        HorizontalAlignment="Left"
+                        Style="{StaticResource Shell.PhoneStatusActionButton}"
+                        Command="{Binding RetryConnectionCommand}"
+                        Visibility="{Binding CanRetryConnection, Converter={StaticResource BoolToVisibilityConverter}}"
+                        AutomationProperties.Name="Retry phone connection and capability check" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

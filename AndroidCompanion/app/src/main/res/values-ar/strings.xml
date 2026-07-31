@@ -1,0 +1,56 @@
+<resources>
+    <string name="app_name">أندرويد دك</string>
+    <string name="notification_title">خادم أندرويد دك</string>
+    <string name="notification_text">الخادم يعمل على %1$s:%2$d</string>
+
+    <!-- Navigation Tabs -->
+    <string name="tab_dashboard">الرئيسية</string>
+    <string name="tab_contacts">جهات الاتصال</string>
+    <string name="tab_media">الوسائط</string>
+    <string name="tab_server">المزامنة</string>
+    <string name="tab_settings">الإعدادات</string>
+
+    <!-- Notification channels -->
+    <string name="notification_channel_server">حالة الخادم</string>
+    <string name="notification_channel_server_desc">يعرض وقت تشغيل خادم أندرويد دك</string>
+    <string name="notification_channel_import">الاستيراد والتصدير</string>
+    <string name="notification_channel_import_desc">نتائج إكمال الاستيراد والتصدير</string>
+
+    <!-- Import notifications -->
+    <string name="notif_import_title">اكتمل استيراد VCF</string>
+    <plurals name="notif_import_success">
+        <item quantity="zero">لم يتم استيراد أي جهة اتصال</item>
+        <item quantity="one">تم استيراد جهة اتصال واحدة بنجاح</item>
+        <item quantity="two">تم استيراد جهتي اتصال بنجاح</item>
+        <item quantity="few">تم استيراد %1$d جهات اتصال بنجاح</item>
+        <item quantity="many">تم استيراد %1$d جهة اتصال بنجاح</item>
+        <item quantity="other">تم استيراد %1$d جهة اتصال بنجاح</item>
+    </plurals>
+    <plurals name="notif_import_all_failed">
+        <item quantity="zero">لم يتم استيراد أي جهة اتصال</item>
+        <item quantity="one">فشل استيراد جهة اتصال واحدة</item>
+        <item quantity="two">فشل استيراد جهتي اتصال</item>
+        <item quantity="few">فشل استيراد %1$d جهات اتصال</item>
+        <item quantity="many">فشل استيراد %1$d جهة اتصال</item>
+        <item quantity="other">فشل استيراد %1$d جهة اتصال</item>
+    </plurals>
+    <plurals name="notif_import_partial">
+        <item quantity="zero">تم استيراد 0 من %2$d جهة اتصال (فشل %3$d)</item>
+        <item quantity="one">تم استيراد جهة اتصال واحدة من أصل %2$d (فشل %3$d)</item>
+        <item quantity="two">تم استيراد جهتي اتصال من أصل %2$d (فشل %3$d)</item>
+        <item quantity="few">تم استيراد %1$d جهات اتصال من أصل %2$d (فشل %3$d)</item>
+        <item quantity="many">تم استيراد %1$d جهة اتصال من أصل %2$d (فشل %3$d)</item>
+        <item quantity="other">تم استيراد %1$d جهة اتصال من أصل %2$d (فشل %3$d)</item>
+    </plurals>
+
+    <!-- Export notifications -->
+    <string name="notif_export_title">اكتمل تصدير VCF</string>
+    <plurals name="notif_export_success">
+        <item quantity="zero">لم يتم تصدير أي جهة اتصال</item>
+        <item quantity="one">تم تصدير جهة اتصال واحدة إلى %2$s</item>
+        <item quantity="two">تم تصدير جهتي اتصال إلى %2$s</item>
+        <item quantity="few">تم تصدير %1$d جهات اتصال إلى %2$s</item>
+        <item quantity="many">تم تصدير %1$d جهة اتصال إلى %2$s</item>
+        <item quantity="other">تم تصدير %1$d جهة اتصال إلى %2$s</item>
+    </plurals>
+</resources>

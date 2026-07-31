@@ -1,0 +1,48 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- ============================================================
+         Animations.xaml — Motion tokens and shared easing curves.
+         Duration values are mirrored from Generated.Metrics.xaml for
+         convenience. Storyboards and animation triggers will be added
+         in Phase 7 (after all views are migrated to use these tokens).
+         ============================================================ -->
+
+    <!-- ── Easing curves ────────────────────────────────────────── -->
+
+    <!-- Standard ease-out: used for entering elements (cards, panels sliding in) -->
+    <CubicEase x:Key="Easing.EaseOut" EasingMode="EaseOut" />
+
+    <!-- Standard ease-in-out: used for selection / toggle transitions -->
+    <CubicEase x:Key="Easing.EaseInOut" EasingMode="EaseInOut" />
+
+    <!-- Overshoot: reserved for celebratory / completion animations -->
+    <BackEase x:Key="Easing.Overshoot" EasingMode="EaseOut" Amplitude="0.3" />
+
+    <!-- ── Hover opacity transition (applied to card hover states) ── -->
+    <!--
+         Usage example in a Style trigger:
+         <Trigger Property="IsMouseOver" Value="True">
+             <Trigger.EnterActions>
+                 <BeginStoryboard>
+                     <Storyboard>
+                         <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                          To="1" Duration="{StaticResource Anim.Hover}"
+                                          EasingFunction="{StaticResource Easing.EaseOut}" />
+                     </Storyboard>
+                 </BeginStoryboard>
+             </Trigger.EnterActions>
+         </Trigger>
+    -->
+
+    <!-- ── Reduced-motion helper ────────────────────────────────── -->
+    <!--
+         Check SystemParameters.ClientAreaAnimation before starting
+         any decorative storyboard. If false, skip the animation and
+         snap directly to the target value.
+
+         Example:
+         if (!SystemParameters.ClientAreaAnimation) return;
+         myStoryboard.Begin();
+    -->
+
+</ResourceDictionary>

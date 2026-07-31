@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Mirrors design-tokens.json for the platform window and splash screen. -->
+    <color name="surface">#F7F9FC</color>
+    <color name="surface_dark">#0B1120</color>
+</resources>

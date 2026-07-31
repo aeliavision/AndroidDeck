@@ -1,0 +1,32 @@
+# STD-AND03: Baseline Profile rules for Android Deck Companion.
+#
+# These rules were hand-authored from the critical startup path.
+# Re-generate with: ./gradlew :app:generateBaselineProfile
+# after adding the :baseline-profile macrobenchmark module.
+#
+# Format: https://developer.android.com/topic/performance/baselineprofiles/manually-create-rules
+
+# ── App entry point ─────────────────────────────────────────────────────────────
+HSPLcom/androiddeck/companion/MainActivity;->onCreate(Landroid/os/Bundle;)V
+HSPLcom/androiddeck/companion/AndroidDeckApp;->onCreate()V
+
+# ── Navigation / Shell ───────────────────────────────────────────────────────────
+Lcom/androiddeck/companion/core/navigation/AppNavHost;
+Lcom/androiddeck/companion/core/navigation/NavRoutes;
+
+# ── Contact list (first screen) ──────────────────────────────────────────────────
+Lcom/androiddeck/companion/feature/contacts/ui/list/ContactListScreen;
+Lcom/androiddeck/companion/feature/contacts/ui/list/ContactCard;
+Lcom/androiddeck/companion/feature/contacts/viewmodel/ContactsViewModel;
+
+# ── Core UI theme (loaded on every recomposition at startup) ─────────────────────
+Lcom/androiddeck/companion/core/ui/theme/Theme;
+Lcom/androiddeck/companion/core/ui/theme/Color;
+Lcom/androiddeck/companion/core/ui/theme/Type;
+
+# ── Avatar composable (heavy — Coil decode on first frame) ───────────────────────
+Lcom/androiddeck/companion/core/ui/components/AvatarComposable;
+
+# ── DI graph initialisation ──────────────────────────────────────────────────────
+HSPLcom/androiddeck/companion/di/AppModule;->provideContentResolver(Landroid/content/Context;)Landroid/content/ContentResolver;
+HSPLcom/androiddeck/companion/di/ContactsModule;->provideContactsRepository(Landroid/content/ContentResolver;)Lcom/androiddeck/companion/feature/contacts/data/ContactsRepository;

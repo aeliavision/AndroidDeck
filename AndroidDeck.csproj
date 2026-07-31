@@ -1,0 +1,63 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>VcfEditor</RootNamespace>
+    <AssemblyName>AndroidDeck</AssemblyName>
+    <Product>AndroidDeck</Product>
+    <AssemblyTitle>AndroidDeck</AssemblyTitle>
+    <Description>Secure local management for Android contacts, files, media, and backups.</Description>
+    <VersionPrefix>3.0.6</VersionPrefix>
+    <InformationalVersion>$(VersionPrefix)</InformationalVersion>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <!-- STD-CS01: Enable nullable reference types for compile-time null safety -->
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Views\**" />
+    <None Remove="ViewModels\**" />
+    <None Remove="Models\**" />
+    <None Remove="Services\**" />
+
+
+    <!-- Ignore the obsolete Phase 1 settings source when upgrading over an older working tree. -->
+    <None Remove="Core\AppSettingsStore.cs" />
+    <Compile Remove="Core\AppSettingsStore.cs" />
+
+    <!-- Ensure test sources are not compiled into the WPF app assembly -->
+    <None Remove="Tests\**" />
+    <Compile Remove="Tests\**" />
+    <None Remove="tests\**" />
+    <Compile Remove="tests\**" />
+    <None Remove="tools\**" />
+    <Compile Remove="tools\**" />
+    <None Remove="VcfEditor.Tests\**" />
+    <Compile Remove="VcfEditor.Tests\**" />
+    <!-- Prevent legacy loose test files from being compiled into the WPF app when upgrading an old tree. -->
+    <Compile Remove="**\*Tests.cs" />
+    <Compile Remove="**\*Test.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\app.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.10" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.10" />
+    <PackageReference Include="System.IO.Abstractions" Version="22.2.0" />
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.10" />
+  </ItemGroup>
+
+</Project>

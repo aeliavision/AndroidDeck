@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.4.11506.43
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidDeck", "AndroidDeck.csproj", "{D975E872-1B86-0323-358D-B05151B066A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VcfEditor.Core.Tests", "tests\VcfEditor.Core.Tests\VcfEditor.Core.Tests.csproj", "{547C03F4-74A3-4825-8CBF-54F6AA5D8D58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VcfEditor.UI.Tests", "tests\VcfEditor.UI.Tests\VcfEditor.UI.Tests.csproj", "{E7F84D65-4CDD-4495-AA52-259023C9A2C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesignTokenGenerator", "tools\DesignTokenGenerator\DesignTokenGenerator.csproj", "{A53E4AE6-B9D2-4EE5-910C-D1E6F14F0C4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesignTokenGenerator.Tests", "tests\DesignTokenGenerator.Tests\DesignTokenGenerator.Tests.csproj", "{B728A74C-9F4C-46C1-8F88-24F9C9B6F7A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VcfEditor.Performance.Tests", "tests\VcfEditor.Performance.Tests\VcfEditor.Performance.Tests.csproj", "{A10B4F40-8D3A-4E12-B9E4-6F19F4D72A91}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D975E872-1B86-0323-358D-B05151B066A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D975E872-1B86-0323-358D-B05151B066A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D975E872-1B86-0323-358D-B05151B066A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D975E872-1B86-0323-358D-B05151B066A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{547C03F4-74A3-4825-8CBF-54F6AA5D8D58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{547C03F4-74A3-4825-8CBF-54F6AA5D8D58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{547C03F4-74A3-4825-8CBF-54F6AA5D8D58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{547C03F4-74A3-4825-8CBF-54F6AA5D8D58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7F84D65-4CDD-4495-AA52-259023C9A2C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7F84D65-4CDD-4495-AA52-259023C9A2C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7F84D65-4CDD-4495-AA52-259023C9A2C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7F84D65-4CDD-4495-AA52-259023C9A2C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A53E4AE6-B9D2-4EE5-910C-D1E6F14F0C4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A53E4AE6-B9D2-4EE5-910C-D1E6F14F0C4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A53E4AE6-B9D2-4EE5-910C-D1E6F14F0C4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A53E4AE6-B9D2-4EE5-910C-D1E6F14F0C4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B728A74C-9F4C-46C1-8F88-24F9C9B6F7A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B728A74C-9F4C-46C1-8F88-24F9C9B6F7A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B728A74C-9F4C-46C1-8F88-24F9C9B6F7A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B728A74C-9F4C-46C1-8F88-24F9C9B6F7A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A10B4F40-8D3A-4E12-B9E4-6F19F4D72A91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A10B4F40-8D3A-4E12-B9E4-6F19F4D72A91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A10B4F40-8D3A-4E12-B9E4-6F19F4D72A91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A10B4F40-8D3A-4E12-B9E4-6F19F4D72A91}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3A50A10D-16D7-44F7-A86C-16482B14E511}
+	EndGlobalSection
+EndGlobal

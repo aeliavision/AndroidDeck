@@ -1,0 +1,109 @@
+<UserControl x:Class="VcfEditor.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:behaviors="clr-namespace:VcfEditor.Behaviors"
+             xmlns:app="clr-namespace:VcfEditor"
+             mc:Ignorable="d" d:DesignHeight="720" d:DesignWidth="1000"
+             Background="{DynamicResource Brush.Background}"
+             behaviors:ResponsiveLayoutBehavior.IsEnabled="True"
+             Tag="{Binding Path=(behaviors:ResponsiveLayoutBehavior.Mode), RelativeSource={RelativeSource Self}}">
+    <Grid Margin="{StaticResource PageMargin}">
+        <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+                <Border Style="{StaticResource PageHeaderPanel}">
+                    <StackPanel>
+                        <TextBlock Text="Settings" Style="{StaticResource DisplayText}" AutomationProperties.HeadingLevel="Level1"/>
+                        <TextBlock Text="Control appearance, safety, paired-device security, and diagnostics."
+                                   Style="{StaticResource BodyText}" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <WrapPanel>
+                    <Border Width="460" Style="{StaticResource ModernCard}" Margin="0,0,12,12" Padding="20">
+                        <StackPanel>
+                            <TextBlock Text="Application" Style="{StaticResource TitleText}"/>
+                            <TextBlock Text="{x:Static app:Constants.AppName}" Style="{StaticResource BodyText}" FontWeight="SemiBold" Margin="0,8,0,0"/>
+                            <TextBlock Text="{x:Static app:Constants.AppVersion}" Style="{StaticResource CaptionText}" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Width="460" Style="{StaticResource ModernCard}" Margin="0,0,12,12" Padding="20">
+                        <StackPanel>
+                            <TextBlock Text="Appearance" Style="{StaticResource TitleText}"/>
+                            <TextBlock Text="Theme: System, Light, or Dark" Style="{StaticResource BodyText}" Margin="0,8,0,6"/>
+                            <ComboBox ItemsSource="{Binding ThemeOptions}" SelectedItem="{Binding SelectedTheme}"
+                                      Style="{StaticResource ModernComboBox}" MinHeight="40" AutomationProperties.Name="Application theme"/>
+                            <CheckBox Content="Prefer compact sidebar" IsChecked="{Binding CompactSidebar}" Margin="0,14,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Width="460" Style="{StaticResource ModernCard}" Margin="0,0,12,12" Padding="20">
+                        <StackPanel>
+                            <TextBlock Text="Safety" Style="{StaticResource TitleText}"/>
+                            <CheckBox Content="Confirm before deleting" IsChecked="{Binding ConfirmOnDelete}" Margin="0,8,0,0"/>
+                            <CheckBox Content="Confirm before exiting" IsChecked="{Binding ConfirmOnExit}" Margin="0,12,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Width="460" Style="{StaticResource ModernCard}" Margin="0,0,12,12" Padding="20">
+                        <StackPanel>
+                            <TextBlock Text="Diagnostics" Style="{StaticResource TitleText}"/>
+                            <TextBlock Text="Export diagnostics creates a redacted report without pairing codes, certificate fingerprints, endpoints, or backup secrets."
+                                       Style="{StaticResource BodyText}" Margin="0,8,0,12" TextWrapping="Wrap"/>
+                            <Button Content="Export diagnostics" Command="{Binding ExportDiagnosticsCommand}"
+                                    HorizontalAlignment="Left" Style="{StaticResource ContextCommandButton}"/>
+                            <TextBlock Text="{Binding DiagnosticExportPath}" Style="{StaticResource CaptionText}" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+                </WrapPanel>
+
+                <Border Style="{StaticResource ModernCard}" Padding="20" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="Paired devices" Style="{StaticResource TitleText}" AutomationProperties.HeadingLevel="Level2"/>
+                        <ItemsControl ItemsSource="{Binding PairedDevices}" Margin="0,8,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource ModernCard}" Margin="0,0,0,8" Padding="14">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding DisplayName}" Style="{StaticResource BodyText}" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding LastUsedDisplay, StringFormat=Last used: {0}}" Style="{StaticResource CaptionText}" Margin="0,4,0,0"/>
+                                                <TextBlock Text="{Binding ExpiresDisplay, StringFormat=Expires: {0}}" Style="{StaticResource CaptionText}" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                            <Button Grid.Column="1" Content="Revoke" Command="{Binding DataContext.RevokeDeviceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}" Style="{StaticResource DestructiveCommandButton}"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <Border Visibility="{Binding HasPairedDevices, Converter={StaticResource InverseBoolToVisibilityConverter}}"
+                                Style="{StaticResource EmptyStatePanel}">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="No paired devices" Style="{StaticResource TitleText}"/>
+                                <TextBlock Text="A phone appears here after its first trusted connection." Style="{StaticResource BodyText}" Margin="0,8,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border Grid.Row="1" Style="{StaticResource CommandBarPanel}" Margin="0,12,0,0">
+            <DockPanel>
+                <StackPanel>
+                    <TextBlock Text="{Binding SaveFeedbackMessage}" Style="{StaticResource BodyText}"
+                               Visibility="{Binding ShowSaveFeedback, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <TextBlock Text="{Binding SaveErrorMessage}" Style="{StaticResource BodyText}"
+                               Visibility="{Binding HasSaveError, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                </StackPanel>
+                <Button DockPanel.Dock="Right" Content="Save changes" Command="{Binding SaveCommand}"
+                        Style="{StaticResource PrimaryCommandButton}"/>
+            </DockPanel>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,0 +1,504 @@
+<UserControl x:Class="VcfEditor.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:behaviors="clr-namespace:VcfEditor.Behaviors"
+             mc:Ignorable="d"
+             behaviors:ResponsiveLayoutBehavior.IsEnabled="True"
+             Background="{DynamicResource Brush.Background}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="{StaticResource PageMargin}" MaxWidth="1480">
+
+            <!-- ═══════════════════════════════════════════════════════
+                 Section 1 — Stat Cards (4-column uniform grid)
+                 ═══════════════════════════════════════════════════════ -->
+            <UniformGrid Columns="4" Margin="0,0,-12,16" AutomationProperties.Name="Device metrics">
+
+                <!-- Contacts -->
+                <Border Style="{StaticResource StatisticCard}" Margin="0,0,12,0"
+                        AutomationProperties.Name="{Binding ContactsMetric.AutomationDescription}">
+                    <Grid>
+                        <StackPanel>
+                            <TextBlock Text="{Binding ContactsMetric.Label}" Style="{StaticResource MutedText}" />
+                            <TextBlock Text="{Binding ContactsMetric.Value}" Style="{StaticResource StatValueText}" />
+                            <TextBlock Text="total on device" Style="{StaticResource MutedText}" Margin="0,4,0,0" />
+                        </StackPanel>
+                        <Border Width="{StaticResource StatCard.BadgeSize}"
+                                Height="{StaticResource StatCard.BadgeSize}"
+                                CornerRadius="{StaticResource RadiusMd}"
+                                Background="{DynamicResource Brush.IconContactsContainer}"
+                                HorizontalAlignment="Right" VerticalAlignment="Top">
+                            <TextBlock Text="&#xE779;" FontFamily="Segoe MDL2 Assets"
+                                       FontSize="{StaticResource IconSize.StatBadge}"
+                                       Foreground="{DynamicResource Brush.IconContacts}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- Photos -->
+                <Border Style="{StaticResource StatisticCard}" Margin="0,0,12,0"
+                        AutomationProperties.Name="{Binding PhotosMetric.AutomationDescription}">
+                    <Grid>
+                        <StackPanel>
+                            <TextBlock Text="{Binding PhotosMetric.Label}" Style="{StaticResource MutedText}" />
+                            <TextBlock Text="{Binding PhotosMetric.Value}" Style="{StaticResource StatValueText}" />
+                            <TextBlock Text="media items" Style="{StaticResource MutedText}" Margin="0,4,0,0" />
+                        </StackPanel>
+                        <Border Width="{StaticResource StatCard.BadgeSize}"
+                                Height="{StaticResource StatCard.BadgeSize}"
+                                CornerRadius="{StaticResource RadiusMd}"
+                                Background="{DynamicResource Brush.IconPhotosContainer}"
+                                HorizontalAlignment="Right" VerticalAlignment="Top">
+                            <TextBlock Text="&#xEB9F;" FontFamily="Segoe MDL2 Assets"
+                                       FontSize="{StaticResource IconSize.StatBadge}"
+                                       Foreground="{DynamicResource Brush.IconPhotos}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- Groups -->
+                <Border Style="{StaticResource StatisticCard}" Margin="0,0,12,0"
+                        AutomationProperties.Name="{Binding GroupsMetric.AutomationDescription}">
+                    <Grid>
+                        <StackPanel>
+                            <TextBlock Text="{Binding GroupsMetric.Label}" Style="{StaticResource MutedText}" />
+                            <TextBlock Text="{Binding GroupsMetric.Value}" Style="{StaticResource StatValueText}" />
+                            <TextBlock Text="contact groups" Style="{StaticResource MutedText}" Margin="0,4,0,0" />
+                        </StackPanel>
+                        <Border Width="{StaticResource StatCard.BadgeSize}"
+                                Height="{StaticResource StatCard.BadgeSize}"
+                                CornerRadius="{StaticResource RadiusMd}"
+                                Background="{DynamicResource Brush.IconGroupsContainer}"
+                                HorizontalAlignment="Right" VerticalAlignment="Top">
+                            <TextBlock Text="&#xE902;" FontFamily="Segoe MDL2 Assets"
+                                       FontSize="{StaticResource IconSize.StatBadge}"
+                                       Foreground="{DynamicResource Brush.IconGroups}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- Storage (live via UpdateStorage / ResetStorage) -->
+                <Border Style="{StaticResource StatisticCard}" Margin="0,0,12,0"
+                        AutomationProperties.Name="{Binding StorageAutomationDescription}">
+                    <Grid>
+                        <StackPanel>
+                            <TextBlock Text="Storage" Style="{StaticResource MutedText}" />
+                            <TextBlock Text="{Binding StorageStatCardValue}" Style="{StaticResource StatValueText}" />
+                            <TextBlock Text="device storage" Style="{StaticResource MutedText}" Margin="0,4,0,0" />
+                        </StackPanel>
+                        <Border Width="{StaticResource StatCard.BadgeSize}"
+                                Height="{StaticResource StatCard.BadgeSize}"
+                                CornerRadius="{StaticResource RadiusMd}"
+                                Background="{DynamicResource Brush.IconStorageContainer}"
+                                HorizontalAlignment="Right" VerticalAlignment="Top">
+                            <TextBlock Text="&#xEDA2;" FontFamily="Segoe MDL2 Assets"
+                                       FontSize="{StaticResource IconSize.StatBadge}"
+                                       Foreground="{DynamicResource Brush.IconStorage}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </Grid>
+                </Border>
+
+            </UniformGrid>
+
+            <!-- ═══════════════════════════════════════════════════════
+                 Section 2 — Hero Panel (Device Connection)
+                 ═══════════════════════════════════════════════════════ -->
+            <Border Style="{StaticResource HeroPanel}" AutomationProperties.Name="Device connection status">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- State-responsive icon badge -->
+                    <Border Width="64" Height="64" CornerRadius="{StaticResource RadiusXl}"
+                            VerticalAlignment="Top">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="{DynamicResource Brush.SurfaceAlt}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPhoneConnected}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource Brush.SuccessContainer}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsPhoneBusy}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource Brush.WarningContainer}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsPhoneInError}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource Brush.ErrorContainer}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="{StaticResource IconSize.HeroDisplay}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="&#xE8EA;" />
+                                    <Setter Property="Foreground" Value="{DynamicResource Brush.TextMuted}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPhoneConnected}" Value="True">
+                                            <Setter Property="Foreground" Value="{DynamicResource Brush.Success}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsPhoneBusy}" Value="True">
+                                            <Setter Property="Foreground" Value="{DynamicResource Brush.Warning}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsPhoneInError}" Value="True">
+                                            <Setter Property="Foreground" Value="{DynamicResource Brush.Error}" />
+                                            <Setter Property="Text" Value="&#xEA6A;" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Border>
+
+                    <!-- Content: title + detail + feature chips -->
+                    <StackPanel Grid.Column="1" Margin="20,0">
+                        <TextBlock Text="{Binding PhoneStatusTitle}"
+                                   Style="{StaticResource HeroTitle}"
+                                   AutomationProperties.HeadingLevel="Level2" />
+                        <TextBlock Text="{Binding PhoneStatusDetail}"
+                                   Style="{StaticResource HeroSubtitle}"
+                                   Margin="0,6,0,12"
+                                   MaxWidth="480"
+                                   HorizontalAlignment="Left" />
+
+                        <!-- Feature capability chips -->
+                        <WrapPanel>
+                            <Border Style="{StaticResource FeatureChip}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE8A5;" FontFamily="Segoe MDL2 Assets"
+                                               FontSize="{StaticResource FontSize.Caption}" Margin="0,0,5,0"
+                                               VerticalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="{DynamicResource Brush.TextMuted}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SupportsFiles}" Value="True">
+                                                        <Setter Property="Foreground" Value="{DynamicResource Brush.Success}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock Text="Files" FontSize="{StaticResource FontSize.Caption}"
+                                               Foreground="{DynamicResource Brush.TextSecondary}"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource FeatureChip}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xEB9F;" FontFamily="Segoe MDL2 Assets"
+                                               FontSize="{StaticResource FontSize.Caption}" Margin="0,0,5,0"
+                                               VerticalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="{DynamicResource Brush.TextMuted}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SupportsGallery}" Value="True">
+                                                        <Setter Property="Foreground" Value="{DynamicResource Brush.Success}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock Text="Gallery" FontSize="{StaticResource FontSize.Caption}"
+                                               Foreground="{DynamicResource Brush.TextSecondary}"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource FeatureChip}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE896;" FontFamily="Segoe MDL2 Assets"
+                                               FontSize="{StaticResource FontSize.Caption}" Margin="0,0,5,0"
+                                               VerticalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="{DynamicResource Brush.TextMuted}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SupportsBackup}" Value="True">
+                                                        <Setter Property="Foreground" Value="{DynamicResource Brush.Success}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock Text="Backup" FontSize="{StaticResource FontSize.Caption}"
+                                               Foreground="{DynamicResource Brush.TextSecondary}"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                        </WrapPanel>
+                    </StackPanel>
+
+                    <!-- Action buttons -->
+                    <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="12,0,0,0">
+                        <Button Content="{Binding PrimaryConnectionActionText}"
+                                Command="{Binding RunPrimaryConnectionActionCommand}"
+                                Style="{StaticResource PrimaryCommandButton}"
+                                MinWidth="140"
+                                AutomationProperties.Name="{Binding PrimaryConnectionActionText}" />
+                        <Button Content="More options"
+                                behaviors:ButtonContextMenuBehavior.IsEnabled="True"
+                                Style="{StaticResource ContextCommandButton}"
+                                Margin="0,6,0,0"
+                                AutomationProperties.Name="Phone connection actions">
+                            <Button.ContextMenu>
+                                <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                    <MenuItem Header="Refresh contacts" Command="{Binding RunPrimaryConnectionActionCommand}" />
+                                    <Separator />
+                                    <MenuItem Header="Disconnect phone" Command="{Binding DisconnectPhoneCommand}" />
+                                </ContextMenu>
+                            </Button.ContextMenu>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ═══════════════════════════════════════════════════════
+                 Section 3 — Quick Actions
+                 ═══════════════════════════════════════════════════════ -->
+            <Grid Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Quick actions"
+                           Style="{StaticResource TitleText}"
+                           AutomationProperties.HeadingLevel="Level2"
+                           VerticalAlignment="Center"
+                           Margin="0" />
+            </Grid>
+
+            <UniformGrid Columns="4" Margin="0,0,-12,20" AutomationProperties.Name="Dashboard quick actions">
+
+                <!-- Browse Files -->
+                <Button Style="{StaticResource QuickActionCard}"
+                        Margin="0,0,12,0"
+                        Command="{Binding NavigateCommand}"
+                        CommandParameter="FileBrowser"
+                        IsEnabled="{Binding SupportsFiles}"
+                        AutomationProperties.Name="Browse phone files — requires phone connection">
+                    <StackPanel HorizontalAlignment="Center">
+                        <Border Width="44" Height="44" CornerRadius="{StaticResource RadiusMd}"
+                                Background="{DynamicResource Brush.IconContactsContainer}"
+                                HorizontalAlignment="Center">
+                            <TextBlock Text="&#xE8A5;" FontFamily="Segoe MDL2 Assets"
+                                       FontSize="{StaticResource IconSize.Md}"
+                                       Foreground="{DynamicResource Brush.IconContacts}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <TextBlock Text="Browse files" Style="{StaticResource QuickActionLabel}" />
+                        <TextBlock Text="Explore device storage" Style="{StaticResource QuickActionSubtitle}" />
+                    </StackPanel>
+                </Button>
+
+                <!-- Open Gallery -->
+                <Button Style="{StaticResource QuickActionCard}"
+                        Margin="0,0,12,0"
+                        Command="{Binding NavigateCommand}"
+                        CommandParameter="Gallery"
+                        IsEnabled="{Binding SupportsGallery}"
+                        AutomationProperties.Name="Open phone gallery — requires phone connection">
+                    <StackPanel HorizontalAlignment="Center">
+                        <Border Width="44" Height="44" CornerRadius="{StaticResource RadiusMd}"
+                                Background="{DynamicResource Brush.IconPhotosContainer}"
+                                HorizontalAlignment="Center">
+                            <TextBlock Text="&#xEB9F;" FontFamily="Segoe MDL2 Assets"
+                                       FontSize="{StaticResource IconSize.Md}"
+                                       Foreground="{DynamicResource Brush.IconPhotos}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <TextBlock Text="Open gallery" Style="{StaticResource QuickActionLabel}" />
+                        <TextBlock Text="Photos and videos" Style="{StaticResource QuickActionSubtitle}" />
+                    </StackPanel>
+                </Button>
+
+                <!-- Create Backup -->
+                <Button Style="{StaticResource QuickActionCard}"
+                        Margin="0,0,12,0"
+                        Command="{Binding NavigateCommand}"
+                        CommandParameter="Backup"
+                        IsEnabled="{Binding SupportsBackup}"
+                        AutomationProperties.Name="Create backup — requires phone connection">
+                    <StackPanel HorizontalAlignment="Center">
+                        <Border Width="44" Height="44" CornerRadius="{StaticResource RadiusMd}"
+                                Background="{DynamicResource Brush.IconGroupsContainer}"
+                                HorizontalAlignment="Center">
+                            <TextBlock Text="&#xE896;" FontFamily="Segoe MDL2 Assets"
+                                       FontSize="{StaticResource IconSize.Md}"
+                                       Foreground="{DynamicResource Brush.IconGroups}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <TextBlock Text="Create backup" Style="{StaticResource QuickActionLabel}" />
+                        <TextBlock Text="Save your data safely" Style="{StaticResource QuickActionSubtitle}" />
+                    </StackPanel>
+                </Button>
+
+                <!-- Manage Contacts -->
+                <Button Style="{StaticResource QuickActionCard}"
+                        Margin="0,0,12,0"
+                        Command="{Binding NavigateCommand}"
+                        CommandParameter="Contacts"
+                        AutomationProperties.Name="Manage contacts">
+                    <StackPanel HorizontalAlignment="Center">
+                        <Border Width="44" Height="44" CornerRadius="{StaticResource RadiusMd}"
+                                Background="{DynamicResource Brush.IconStorageContainer}"
+                                HorizontalAlignment="Center">
+                            <TextBlock Text="&#xE779;" FontFamily="Segoe MDL2 Assets"
+                                       FontSize="{StaticResource IconSize.Md}"
+                                       Foreground="{DynamicResource Brush.IconStorage}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <TextBlock Text="Manage contacts" Style="{StaticResource QuickActionLabel}" />
+                        <TextBlock Text="Import, export, edit" Style="{StaticResource QuickActionSubtitle}" />
+                    </StackPanel>
+                </Button>
+
+            </UniformGrid>
+
+            <!-- ═══════════════════════════════════════════════════════
+                 Section 4 — Storage Summary + Recent Activity
+                 ═══════════════════════════════════════════════════════ -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="3*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Storage Summary (live bindings) -->
+                <Border Style="{StaticResource ModernCard}" Margin="0,0,12,0"
+                        AutomationProperties.Name="Storage summary">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,12">
+                            <TextBlock Text="Storage" Style="{StaticResource TitleText}"
+                                       AutomationProperties.HeadingLevel="Level2"
+                                       Margin="0" />
+                            <Button Content="Device details"
+                                    Command="{Binding ShowDeviceDetailsCommand}"
+                                    Style="{StaticResource LinkButton}"
+                                    HorizontalAlignment="Right" VerticalAlignment="Center"
+                                    FontSize="{StaticResource FontSize.Caption}" />
+                        </Grid>
+
+                        <!-- Used / Free rows — visible only when storage loaded -->
+                        <StackPanel Visibility="{Binding IsStorageLoaded, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <!-- Used storage row -->
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="Used" Style="{StaticResource MutedText}" Margin="0,0,0,4" />
+                                    <ProgressBar Value="{Binding StorageUsedPercent, Mode=OneWay}" Maximum="100" Height="6"
+                                                 Background="{DynamicResource Brush.SurfaceAlt}"
+                                                 Foreground="{DynamicResource Brush.Primary}" />
+                                </StackPanel>
+                                <TextBlock Grid.Column="1" Text="{Binding StorageUsedText}" Style="{StaticResource MutedText}"
+                                           VerticalAlignment="Center" Margin="12,0,0,0" />
+                            </Grid>
+
+                            <!-- Free storage row -->
+                            <Grid Margin="0,0,0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="Free" Style="{StaticResource MutedText}" Margin="0,0,0,4" />
+                                    <ProgressBar Value="{Binding StorageFreePercent, Mode=OneWay}" Maximum="100" Height="6"
+                                                 Background="{DynamicResource Brush.SurfaceAlt}"
+                                                 Foreground="{DynamicResource Brush.Success}" />
+                                </StackPanel>
+                                <TextBlock Grid.Column="1" Text="{Binding StorageFreeText}" Style="{StaticResource MutedText}"
+                                           VerticalAlignment="Center" Margin="12,0,0,0" />
+                            </Grid>
+
+                            <!-- Total storage label -->
+                            <TextBlock Margin="0,8,0,0">
+                                <Run Text="Total: " Foreground="{DynamicResource Brush.TextMuted}" />
+                                <Run Text="{Binding StorageTotalText, Mode=OneWay}" Foreground="{DynamicResource Brush.TextSecondary}" />
+                            </TextBlock>
+                        </StackPanel>
+
+                        <!-- Empty state — visible when storage not yet loaded -->
+                        <Border Style="{StaticResource EmptyStatePanel}" MinHeight="80"
+                                Visibility="{Binding IsStorageLoaded, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="Connect a phone to see storage" Style="{StaticResource MutedText}"
+                                           HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- Recent Activity -->
+                <Border Grid.Column="1" Style="{StaticResource ModernCard}"
+                        AutomationProperties.Name="Recent activity">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,12">
+                            <TextBlock Text="Recent activity" Style="{StaticResource TitleText}"
+                                       AutomationProperties.HeadingLevel="Level2"
+                                       Margin="0" />
+                            <Button Content="View all" Style="{StaticResource LinkButton}"
+                                    HorizontalAlignment="Right" VerticalAlignment="Center"
+                                    FontSize="{StaticResource FontSize.Caption}" />
+                        </Grid>
+
+                        <!-- Activity list -->
+                        <ItemsControl ItemsSource="{Binding RecentActivity}"
+                                      Visibility="{Binding IsRecentActivityEmpty, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,0,10" AutomationProperties.Name="{Binding AutomationText}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <!-- Activity dot indicator -->
+                                        <Ellipse Width="6" Height="6"
+                                                 Fill="{DynamicResource Brush.Primary}"
+                                                 VerticalAlignment="Center"
+                                                 Margin="0,0,10,0" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Message}"
+                                                   Style="{StaticResource BodyText}"
+                                                   TextWrapping="Wrap" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="2" Text="{Binding TimestampText}"
+                                                   Style="{StaticResource MutedText}"
+                                                   VerticalAlignment="Center"
+                                                   Margin="16,0,0,0" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- Empty state -->
+                        <Border Style="{StaticResource EmptyStatePanel}" MinHeight="100"
+                                Visibility="{Binding IsRecentActivityEmpty, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="&#xE823;" FontFamily="Segoe MDL2 Assets"
+                                           FontSize="{StaticResource IconSize.HeroDisplay}" Foreground="{DynamicResource Brush.TextMuted}"
+                                           HorizontalAlignment="Center" Margin="0,0,0,8" />
+                                <TextBlock Text="No recent activity" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           Foreground="{DynamicResource Brush.TextSecondary}" />
+                                <TextBlock Text="Completed phone actions will appear here."
+                                           Style="{StaticResource MutedText}" TextWrapping="Wrap"
+                                           TextAlignment="Center" Margin="0,4,0,0" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

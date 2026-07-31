@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Modern Android APIs -->
+    <issue id="NewerVersionAvailable" severity="warning" />
+    <issue id="GradleDependency" severity="warning" />
+    <issue id="ObsoleteSdkInt" severity="error" />
+
+    <!-- Performance -->
+    <issue id="DrawAllocation" severity="error" />
+    <issue id="Wakelock" severity="error" />
+    <issue id="Recycle" severity="error" />
+
+</lint>

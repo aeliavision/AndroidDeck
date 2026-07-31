@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">AndroidDeck</string>
+    <string name="notification_title">AndroidDeck Server</string>
+    <string name="notification_text">Server running on %1$s:%2$d</string>
+
+    <!-- Navigation Tabs -->
+    <string name="tab_dashboard">Home</string>
+    <string name="tab_contacts">Contacts</string>
+    <string name="tab_media">Media</string>
+    <string name="tab_server">Sync</string>
+    <string name="tab_settings">Settings</string>
+
+    <!-- Notification channels -->
+    <string name="notification_channel_server">Server Status</string>
+    <string name="notification_channel_server_desc">Shows when the AndroidDeck server is running</string>
+    <string name="notification_channel_import">Import &amp; Export</string>
+    <string name="notification_channel_import_desc">Import and export completion results</string>
+
+    <!-- Import notifications -->
+    <string name="notif_import_title">VCF Import Complete</string>
+    <plurals name="notif_import_success">
+        <item quantity="one">Successfully imported %1$d contact</item>
+        <item quantity="other">Successfully imported %1$d contacts</item>
+    </plurals>
+    <plurals name="notif_import_all_failed">
+        <item quantity="one">Failed to import %1$d contact</item>
+        <item quantity="other">Failed to import all %1$d contacts</item>
+    </plurals>
+    <plurals name="notif_import_partial">
+        <item quantity="one">Imported %1$d of %2$d contact (%3$d failed)</item>
+        <item quantity="other">Imported %1$d of %2$d contacts (%3$d failed)</item>
+    </plurals>
+
+    <!-- Export notifications -->
+    <string name="notif_export_title">VCF Export Complete</string>
+    <plurals name="notif_export_success">
+        <item quantity="one">Exported %1$d contact to %2$s</item>
+        <item quantity="other">Exported %1$d contacts to %2$s</item>
+    </plurals>
+</resources>

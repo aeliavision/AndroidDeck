@@ -1,0 +1,34 @@
+package com.aeliavision.androiddeck.di
+
+import android.content.ContentResolver
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import com.aeliavision.androiddeck.core.notification.NotificationHelper
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+private val Context.authDataStore: DataStore<Preferences> by preferencesDataStore(name = "auth_prefs")
+
+@Module
+@InstallIn(SingletonComponent::class)
+object AppModule {
+    // AuthPreferencesStore, which replaces the old SharedPreferences-based AuthManager.
+    @Provides
+    @Singleton
+    fun provideAuthDataStore(@ApplicationContext context: Context): DataStore<Preferences> =
+        context.authDataStore
+
+    @Provides
+    @Singleton
+    fun provideContentResolver(@ApplicationContext context: Context): ContentResolver =
+        context.contentResolver
+
+    @Provides
+    @Singleton
+    fun provideNotificationHelper(): NotificationHelper = NotificationHelper()
+}

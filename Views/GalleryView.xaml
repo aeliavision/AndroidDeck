@@ -1,0 +1,218 @@
+<UserControl x:Class="VcfEditor.Views.GalleryView"
+             x:Name="Root"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:behaviors="clr-namespace:VcfEditor.Behaviors"
+             xmlns:helpers="clr-namespace:VcfEditor.Helpers"
+             mc:Ignorable="d" d:DesignHeight="720" d:DesignWidth="1200"
+             Background="{DynamicResource Brush.Background}"
+             behaviors:ResponsiveLayoutBehavior.IsEnabled="True"
+             Tag="{Binding Path=(behaviors:ResponsiveLayoutBehavior.Mode), RelativeSource={RelativeSource Self}}">
+    <Grid Margin="{StaticResource PageMargin}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Style="{StaticResource PageHeaderPanel}">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Left">
+                    <TextBlock Text="Gallery" Style="{StaticResource DisplayText}" AutomationProperties.HeadingLevel="Level1"/>
+                    <TextBlock Text="Browse photos and videos stored on the connected phone."
+                               Style="{StaticResource BodyText}" Margin="0,4,0,0"/>
+                </StackPanel>
+                <Button DockPanel.Dock="Right" Content="Refresh" Command="{Binding Actions.RefreshCommand, ElementName=Root}"
+                        Style="{StaticResource ContextCommandButton}" AutomationProperties.Name="Refresh gallery"/>
+            </DockPanel>
+        </Border>
+
+        <Border Grid.Row="1" Style="{StaticResource CommandBarPanel}">
+            <DockPanel LastChildFill="True">
+                <ComboBox x:Name="AlbumsComboBox" DockPanel.Dock="Left" Width="240" MinHeight="40"
+                          ItemsSource="{Binding Albums}" SelectedItem="{Binding SelectedAlbum}"
+                          DisplayMemberPath="Name" Visibility="Collapsed"
+                          Style="{StaticResource ModernComboBox}"
+                          AutomationProperties.Name="Choose album"/>
+                <WrapPanel DockPanel.Dock="Right" HorizontalAlignment="Right">
+                    <Button Content="Select all" Command="{Binding Actions.SelectAllCommand, ElementName=Root}"
+                            Style="{StaticResource ContextCommandButton}"/>
+                    <Button Content="Clear selection" Command="{Binding Actions.ClearSelectionCommand, ElementName=Root}"
+                            Style="{StaticResource ContextCommandButton}"/>
+                    <Button Content="Download" Command="{Binding Actions.DownloadCommand, ElementName=Root}"
+                            Style="{StaticResource PrimaryCommandButton}"/>
+                    <Button Content="More"
+                            Tag="{Binding Actions, ElementName=Root}"
+                            behaviors:ButtonContextMenuBehavior.IsEnabled="True"
+                            Style="{StaticResource ContextCommandButton}">
+                        <Button.ContextMenu>
+                            <ContextMenu DataContext="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource Self}}">
+                                <MenuItem Header="Edit metadata" Command="{Binding EditMetadataCommand}"/>
+                                <MenuItem Header="Rename" Command="{Binding RenameCommand}"/>
+                                <MenuItem Header="Move" Command="{Binding MoveCommand}"/>
+                                <Separator/>
+                                <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                    </Button>
+                </WrapPanel>
+                <TextBlock Text="{Binding SelectedCount, StringFormat={}{0} selected}" Style="{StaticResource BodyText}"
+                           VerticalAlignment="Center" Margin="12,0" AutomationProperties.LiveSetting="Polite"/>
+            </DockPanel>
+        </Border>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="AlbumColumn" Width="220"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition x:Name="PreviewColumn" Width="0"/>
+            </Grid.ColumnDefinitions>
+
+            <Border x:Name="AlbumSidebar" Grid.Column="0" Style="{StaticResource ModernCard}" Padding="12" Margin="0,0,12,0">
+                <StackPanel>
+                    <TextBlock Text="Albums" Style="{StaticResource TitleText}" AutomationProperties.HeadingLevel="Level2"/>
+                    <ListBox ItemsSource="{Binding Albums}" SelectedItem="{Binding SelectedAlbum}"
+                             DisplayMemberPath="Name" BorderThickness="0" Background="Transparent"
+                             ScrollViewer.CanContentScroll="True" VirtualizingPanel.IsVirtualizing="True"
+                             VirtualizingPanel.VirtualizationMode="Recycling"
+                             AutomationProperties.Name="Albums"/>
+                </StackPanel>
+            </Border>
+
+            <Border x:Name="OuterBorder" Grid.Column="1" Style="{StaticResource ModernCard}" Padding="0" ClipToBounds="True">
+                <Grid>
+                    <ListBox x:Name="MediaGrid" ItemsSource="{Binding MediaItems}" BorderThickness="0"
+                             Background="Transparent" SelectionMode="Single"
+                             KeyDown="MediaGrid_KeyDown"
+                             ScrollViewer.ScrollChanged="MediaGrid_ScrollChanged"
+                             ScrollViewer.CanContentScroll="True"
+                             VirtualizingPanel.IsVirtualizing="True"
+                             VirtualizingPanel.VirtualizationMode="Recycling"
+                             AutomationProperties.Name="Gallery items">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate><helpers:VirtualizingWrapPanel ItemWidth="184" ItemHeight="220"/></ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Margin" Value="6"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="AutomationProperties.Name" Value="{Binding Media.Name}"/>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border x:Name="TileBorder" Width="190" Height="226" Style="{StaticResource ModernCard}"
+                                        Padding="0" Tag="{Binding}" MouseLeftButtonUp="MediaItem_Click" Cursor="Hand">
+                                    <Grid>
+                                        <Grid.RowDefinitions><RowDefinition Height="170"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                                        <Border Grid.Row="0" Background="{DynamicResource Brush.SurfaceAlt}"
+                                                CornerRadius="{StaticResource RadiusMd}">
+                                            <Grid ClipToBounds="True">
+                                                <Image Source="{Binding Thumbnail}" Stretch="UniformToFill"/>
+                                                <Border Background="{DynamicResource Brush.MediaScrim}"
+                                                        Visibility="{Binding IsSelected, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                    <TextBlock Text="Selected" Foreground="{DynamicResource Brush.OnPrimary}"
+                                                               FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <CheckBox IsChecked="{Binding IsSelected}" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                                          Margin="8" Click="ItemCheckbox_Click"
+                                                          AutomationProperties.Name="Select media item"/>
+                                            </Grid>
+                                        </Border>
+                                        <StackPanel Grid.Row="1" Margin="10,8">
+                                            <TextBlock Text="{Binding Media.Name}" Style="{StaticResource BodyText}" FontWeight="SemiBold"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding Media.MediaType}" Style="{StaticResource CaptionText}" Margin="0,3,0,0"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <Border Visibility="{Binding HasNoMedia, Converter={StaticResource BoolToVisibilityConverter}}"
+                            Style="{StaticResource EmptyStatePanel}" Margin="20">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="Empty album" Style="{StaticResource TitleText}" HorizontalAlignment="Center"/>
+                            <TextBlock Text="This album does not contain any photos or videos."
+                                       Style="{StaticResource BodyText}" Margin="0,8,0,0" TextAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"
+                            Background="{DynamicResource Brush.SurfaceRaised}" Opacity="0.92" Panel.ZIndex="10">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <ProgressBar IsIndeterminate="True" Width="220" Height="8"/>
+                            <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource BodyText}" Margin="0,12,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <Border x:Name="PreviewPane" Grid.Column="2" Style="{StaticResource ModernCard}" Margin="12,0,0,0"
+                    Padding="16" Visibility="Collapsed">
+                <DockPanel>
+                    <Button DockPanel.Dock="Top" Content="Close preview" Command="{Binding Actions.ClosePreviewCommand, ElementName=Root}"
+                            HorizontalAlignment="Right" Style="{StaticResource ContextCommandButton}"/>
+                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Content="Previous" Command="{Binding Actions.PreviousCommand, ElementName=Root}" Style="{StaticResource ContextCommandButton}"/>
+                        <Button Content="Zoom out" Click="ZoomOut_Click" Style="{StaticResource ContextCommandButton}"/>
+                        <Button Content="Reset" Click="ZoomReset_Click" Style="{StaticResource ContextCommandButton}"/>
+                        <Button Content="Zoom in" Click="ZoomIn_Click" Style="{StaticResource ContextCommandButton}"/>
+                        <Button Content="Next" Command="{Binding Actions.NextCommand, ElementName=Root}" Style="{StaticResource ContextCommandButton}"/>
+                    </StackPanel>
+                    <ScrollViewer x:Name="PreviewScrollViewer" PreviewMouseWheel="Preview_MouseWheel"
+                                  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
+                        <Image Source="{Binding PreviewItem.FullResolution}" Stretch="Uniform" RenderTransformOrigin="0.5,0.5">
+                            <Image.RenderTransform><ScaleTransform x:Name="PreviewScale" ScaleX="1" ScaleY="1"/></Image.RenderTransform>
+                        </Image>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+
+            <Border x:Name="PreviewDrawer" Grid.ColumnSpan="3" Visibility="Collapsed"
+                    Background="{DynamicResource Brush.SurfaceRaised}" Padding="20" Panel.ZIndex="30"
+                    KeyDown="Preview_KeyDown" Focusable="True">
+                <DockPanel>
+                    <Button DockPanel.Dock="Top" Content="Close preview" Command="{Binding Actions.ClosePreviewCommand, ElementName=Root}"
+                            HorizontalAlignment="Right" Style="{StaticResource ContextCommandButton}"/>
+                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Content="Previous" Command="{Binding Actions.PreviousCommand, ElementName=Root}" Style="{StaticResource ContextCommandButton}"/>
+                        <Button Content="Zoom out" Click="ZoomOut_Click" Style="{StaticResource ContextCommandButton}"/>
+                        <Button Content="Reset" Click="ZoomReset_Click" Style="{StaticResource ContextCommandButton}"/>
+                        <Button Content="Zoom in" Click="ZoomIn_Click" Style="{StaticResource ContextCommandButton}"/>
+                        <Button Content="Next" Command="{Binding Actions.NextCommand, ElementName=Root}" Style="{StaticResource ContextCommandButton}"/>
+                    </StackPanel>
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                        <Image Source="{Binding PreviewItem.FullResolution}" Stretch="Uniform"/>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+        </Grid>
+
+        <StackPanel Grid.Row="3">
+            <Button Content="Load more" Command="{Binding Actions.LoadMoreCommand, ElementName=Root}"
+                    Visibility="{Binding HasMoreItems, Converter={StaticResource BoolToVisibilityConverter}}"
+                    HorizontalAlignment="Center" Margin="0,12,0,0" Style="{StaticResource ContextCommandButton}"/>
+            <Border Visibility="{Binding IsTransferring, Converter={StaticResource BoolToVisibilityConverter}}"
+                    Style="{StaticResource OperationCenterCard}">
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Content="Cancel" Command="{Binding Actions.CancelTransferCommand, ElementName=Root}"
+                            Style="{StaticResource ContextCommandButton}"/>
+                    <StackPanel>
+                        <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource BodyText}"/>
+                        <ProgressBar Value="{Binding TransferProgress, Mode=OneWay}" Maximum="100" Height="8" Margin="0,8,0,0"/>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+            <Border Visibility="{Binding HasError, Converter={StaticResource BoolToVisibilityConverter}}"
+                    Style="{StaticResource StatusBanner.Error}" Margin="0,12,0,0">
+                <TextBlock Text="{Binding ErrorMessage}" Style="{StaticResource BodyText}" TextWrapping="Wrap"/>
+            </Border>
+        </StackPanel>
+    </Grid>
+</UserControl>

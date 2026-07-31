@@ -1,0 +1,3 @@
+# Test Parser
+$vcfPath = "test_arabic_complex.vcf"
+Write-Host "Please open $vcfPath in the VCFEditor application to verify Arabic display and line folding."

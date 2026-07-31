@@ -1,0 +1,157 @@
+<UserControl x:Class="VcfEditor.Views.BackupView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:behaviors="clr-namespace:VcfEditor.Behaviors"
+             mc:Ignorable="d" d:DesignHeight="720" d:DesignWidth="1100"
+             Background="{DynamicResource Brush.Background}"
+             behaviors:ResponsiveLayoutBehavior.IsEnabled="True"
+             Tag="{Binding Path=(behaviors:ResponsiveLayoutBehavior.Mode), RelativeSource={RelativeSource Self}}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="{StaticResource PageMargin}">
+            <Border Style="{StaticResource PageHeaderPanel}">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Left">
+                        <TextBlock Text="Backup &amp; Restore" Style="{StaticResource DisplayText}"
+                                   AutomationProperties.HeadingLevel="Level1"/>
+                        <TextBlock Text="Create protected archives and restore verified data to the connected phone."
+                                   Style="{StaticResource BodyText}" Margin="0,4,0,0"/>
+                    </StackPanel>
+                    <WrapPanel DockPanel.Dock="Right" HorizontalAlignment="Right">
+                        <Button Content="Create backup" Command="{Binding CreateBackupCommand}"
+                                Style="{StaticResource PrimaryCommandButton}"/>
+                        <Button Content="Restore backup" Command="{Binding RestoreBackupCommand}"
+                                Style="{StaticResource ContextCommandButton}"/>
+                        <Button Content="More" behaviors:ButtonContextMenuBehavior.IsEnabled="True" Style="{StaticResource ContextCommandButton}">
+                            <Button.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Refresh history" Command="{Binding RefreshHistoryCommand}"/>
+                                    <MenuItem Header="Cancel active operation" Command="{Binding CancelCommand}"/>
+                                </ContextMenu>
+                            </Button.ContextMenu>
+                        </Button>
+                    </WrapPanel>
+                </DockPanel>
+            </Border>
+
+            <WrapPanel>
+                <Border Width="500" MinHeight="230" Style="{StaticResource ModernCard}" Margin="0,0,12,12" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="Backup scope" Style="{StaticResource TitleText}" AutomationProperties.HeadingLevel="Level2"/>
+                        <WrapPanel Margin="0,8,0,0">
+                            <CheckBox Content="Contacts" IsChecked="{Binding BackupContacts}" IsEnabled="{Binding IsIdle}" Margin="0,0,20,8"/>
+                            <CheckBox Content="Gallery" IsChecked="{Binding BackupGallery}" IsEnabled="{Binding IsIdle}" Margin="0,0,20,8"/>
+                            <CheckBox Content="{Binding BackupFilesLabel}" IsChecked="{Binding BackupFiles}" IsEnabled="{Binding IsIdle}" Margin="0,0,20,8"/>
+                        </WrapPanel>
+                        <TextBlock Text="{Binding ScopeSummary, StringFormat=Selected: {0}}" Style="{StaticResource BodyText}" Margin="0,8,0,0"/>
+                        <CheckBox Content="Encrypt on device" IsChecked="{Binding EncryptOnDevice}" IsEnabled="{Binding IsIdle}" Margin="0,14,0,0"/>
+                        <CheckBox Content="Add local encryption" IsChecked="{Binding EncryptLocally}" IsEnabled="{Binding IsIdle}" Margin="0,8,0,0"/>
+                        <CheckBox Content="Incremental, when supported" IsChecked="{Binding Incremental}" IsEnabled="{Binding IsIdle}"
+                                  Visibility="{Binding ShowIncremental, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Width="500" MinHeight="230" Style="{StaticResource ModernCard}" Margin="0,0,12,12" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="Preflight summary" Style="{StaticResource TitleText}" AutomationProperties.HeadingLevel="Level2"/>
+                        <TextBlock Text="{Binding EncryptionStatus, StringFormat=Encryption: {0}}" Style="{StaticResource BodyText}" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                        <TextBlock Text="{Binding PermissionSummary}" Style="{StaticResource BodyText}" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                        <TextBlock Text="{Binding EstimatedSizeText}" Style="{StaticResource BodyText}" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                        <TextBlock Text="{Binding DestinationSummary}" Style="{StaticResource BodyText}" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+            </WrapPanel>
+
+            <Border Style="{StaticResource StatusBanner.Warning}" Margin="0,0,0,12">
+                <StackPanel>
+                    <TextBlock Text="Restore warning" Style="{StaticResource TitleText}"/>
+                    <TextBlock Text="{Binding RestoreWarning}" Style="{StaticResource BodyText}" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource OperationCenterCard}"
+                    Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}">
+                <StackPanel>
+                    <DockPanel>
+                        <StackPanel>
+                            <TextBlock Text="{Binding OperationTitle}" Style="{StaticResource TitleText}"/>
+                            <TextBlock Text="{Binding OperationDetail}" Style="{StaticResource BodyText}" TextWrapping="Wrap"/>
+                        </StackPanel>
+                        <TextBlock DockPanel.Dock="Right" Text="{Binding ProgressPercentText}" Style="{StaticResource BodyText}" FontWeight="SemiBold"/>
+                    </DockPanel>
+                    <ItemsControl Margin="0,12,0,8">
+                        <ItemsControl.Items>
+                            <TextBlock Text="1 · Prepare" Style="{StaticResource CaptionText}"/>
+                            <TextBlock Text="2 · Transfer" Style="{StaticResource CaptionText}"/>
+                            <TextBlock Text="3 · Verify" Style="{StaticResource CaptionText}"/>
+                        </ItemsControl.Items>
+                        <ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Rows="1"/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                    <ProgressBar Value="{Binding Progress, Mode=OneWay}" Minimum="0" Maximum="1" Height="8"/>
+                    <DockPanel Margin="0,10,0,0">
+                        <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource BodyText}" TextWrapping="Wrap"/>
+                        <Button DockPanel.Dock="Right" Content="Cancel" Command="{Binding CancelCommand}" Style="{StaticResource ContextCommandButton}"/>
+                    </DockPanel>
+                    <ItemsControl ItemsSource="{Binding RestoreItemOutcomes}" Margin="0,10,0,0"
+                                  Visibility="{Binding HasRestoreItemOutcomes, Converter={StaticResource BoolToVisibilityConverter}}"
+                                  AutomationProperties.Name="Per-item restore results">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,0,0,6" AutomationProperties.Name="{Binding Path}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Path}" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyText}"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Detail}" Margin="16,0,0,0" Style="{StaticResource CaptionText}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource StatusBanner.Success}" Margin="0,12,0,12">
+                <StackPanel>
+                    <TextBlock Text="Latest restore result" Style="{StaticResource TitleText}"/>
+                    <TextBlock Text="{Binding LastRestoreSummary}" Style="{StaticResource BodyText}" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource ModernCard}" Padding="16">
+                <StackPanel>
+                    <TextBlock Text="Backup history" Style="{StaticResource TitleText}" AutomationProperties.HeadingLevel="Level2"/>
+                    <ItemsControl ItemsSource="{Binding History}" Margin="0,8,0,0">
+                        <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="310" MinHeight="160" Style="{StaticResource ModernCard}" Margin="0,0,12,12" Padding="16">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding CreatedAtDisplay}" Style="{StaticResource BodyText}" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding TypesDisplay}" Style="{StaticResource CaptionText}" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{Binding ItemCount, StringFormat=Items: {0}}" Style="{StaticResource BodyText}" Margin="0,8,0,0"/>
+                                        <TextBlock Text="{Binding ArchiveSizeDisplay, StringFormat=Size: {0}}" Style="{StaticResource BodyText}"/>
+                                        <WrapPanel Margin="0,12,0,0">
+                                            <Button Content="Download" Command="{Binding DataContext.DownloadHistoryBackupCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}" Style="{StaticResource ContextCommandButton}"/>
+                                            <Button Content="Restore" Command="{Binding DataContext.RestoreHistoryBackupCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}" Style="{StaticResource PrimaryCommandButton}"/>
+                                        </WrapPanel>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <Border Visibility="{Binding HasHistory, Converter={StaticResource InverseBoolToVisibilityConverter}}"
+                            Style="{StaticResource EmptyStatePanel}">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="No backups yet" Style="{StaticResource TitleText}"/>
+                            <TextBlock Text="Create the first backup to see it here." Style="{StaticResource BodyText}" Margin="0,8,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

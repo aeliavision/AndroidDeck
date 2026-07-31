@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="sharedpref" path="." />
+        <exclude domain="database" path="androiddeck.db" />
+        <exclude domain="file" path="datastore/" />
+        <exclude domain="file" path="security/" />
+        <exclude domain="file" path="backups/keys/" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="sharedpref" path="." />
+        <exclude domain="file" path="datastore/" />
+        <exclude domain="file" path="security/" />
+        <exclude domain="file" path="backups/keys/" />
+    </device-transfer>
+</data-extraction-rules>

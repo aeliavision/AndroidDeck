@@ -1,0 +1,33 @@
+# .NET
+**/bin/
+**/obj/
+*.user
+*.suo
+.vs/
+TestResults/
+coverage/
+*.trx
+
+# Android / Gradle
+**/.gradle/
+**/build/
+**/captures/
+**/local.properties
+**/.idea/
+*.iml
+
+# Signing / secrets
+*.jks
+*.keystore
+keystore.properties
+*.pfx
+*.p12
+*.pem
+*.key
+
+# OS / temporary
+.DS_Store
+Thumbs.db
+*.tmp
+*.bak
+.artifacts/
