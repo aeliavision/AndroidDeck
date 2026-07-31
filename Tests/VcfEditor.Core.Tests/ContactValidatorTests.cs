@@ -9,8 +9,8 @@ public sealed class ContactValidatorTests
     [Fact]
     public void ValidateContactAcceptsNamedLocalContactWithValidPhone()
     {
-        var contact = new Contact { FullName = "Walid Salame" };
-        contact.PhoneNumbers.Add(new PhoneNumber("+961 79 124 237", PhoneNumberType.CELL));
+        var contact = new Contact { FullName = "John Doe" };
+        contact.PhoneNumbers.Add(new PhoneNumber("+1 555 010 0237", PhoneNumberType.CELL));
 
         var result = ContactValidator.ValidateContact(contact);
 
@@ -21,8 +21,8 @@ public sealed class ContactValidatorTests
     [Fact]
     public void ValidateContactRejectsInvalidEmail()
     {
-        var contact = new Contact { FullName = "Walid Salame", Email = "invalid-email" };
-        contact.PhoneNumbers.Add(new PhoneNumber("+96179124237", PhoneNumberType.CELL));
+        var contact = new Contact { FullName = "John Doe", Email = "invalid-email" };
+        contact.PhoneNumbers.Add(new PhoneNumber("+15550100237", PhoneNumberType.CELL));
 
         var result = ContactValidator.ValidateContact(contact);
 

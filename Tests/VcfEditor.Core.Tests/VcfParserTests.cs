@@ -11,19 +11,19 @@ public sealed class VcfParserTests
         const string vcf = """
             BEGIN:VCARD
             VERSION:3.0
-            N:Salame;Walid;;;
-            FN:Walid Salame
-            TEL;TYPE=CELL:+96179124237
-            EMAIL:walid@example.com
+            N:Doe;John;;;
+            FN:John Doe
+            TEL;TYPE=CELL:+15550100237
+            EMAIL:john.doe@example.com
             END:VCARD
             """;
 
         var contacts = new VcfParser().ParseVcf(new StringReader(vcf)).ToList();
 
         contacts.Should().ContainSingle();
-        contacts[0].FullName.Should().Be("Walid Salame");
-        contacts[0].PrimaryPhoneNumber.Should().Be("+96179124237");
-        contacts[0].Email.Should().Be("walid@example.com");
+        contacts[0].FullName.Should().Be("John Doe");
+        contacts[0].PrimaryPhoneNumber.Should().Be("+15550100237");
+        contacts[0].Email.Should().Be("john.doe@example.com");
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public sealed class VcfParserTests
             BEGIN:VCARD
             VERSION:3.0
             FN:Truncated Contact
-            TEL:+9613650477
+            TEL:+15550100477
             """;
 
         var contacts = new VcfParser().ParseVcf(new StringReader(vcf)).ToList();
@@ -63,12 +63,12 @@ public sealed class VcfParserLimitTests
     {
         var contact = new VcfEditor.Models.Contact
         {
-            FirstName = "Walid",
-            LastName = "Salame",
-            Email = "walid@example.com"
+            FirstName = "John",
+            LastName = "Doe",
+            Email = "john.doe@example.com"
         };
         contact.PhoneNumbers.Add(new VcfEditor.Models.PhoneNumber(
-            "+96179124237",
+            "+15550100237",
             VcfEditor.Models.PhoneNumberType.CELL));
         var parser = new VcfParser();
         using var writer = new StringWriter();

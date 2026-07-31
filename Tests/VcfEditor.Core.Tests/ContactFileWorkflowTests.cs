@@ -15,13 +15,13 @@ public sealed class ContactFileWorkflowTests
             var path = Path.Combine(directory, "contacts.vcf");
             var contact = new Contact
             {
-                FirstName = "Walid",
-                LastName = "Salame",
+                FirstName = "John",
+                LastName = "Doe",
                 Organization = "AndroidDeck",
                 Title = "Developer",
-                Email = "walid@example.com"
+                Email = "john.doe@example.com"
             };
-            contact.PhoneNumbers.Add(new PhoneNumber("+96179124237", PhoneNumberType.CELL));
+            contact.PhoneNumbers.Add(new PhoneNumber("+15550100237", PhoneNumberType.CELL));
 
             var workflow = new ContactFileWorkflow(new VcfParser());
 
@@ -29,11 +29,11 @@ public sealed class ContactFileWorkflowTests
             var loaded = await workflow.LoadAsync(path);
 
             var saved = Assert.Single(loaded);
-            Assert.Equal("Walid Salame", saved.FullName);
+            Assert.Equal("John Doe", saved.FullName);
             Assert.Equal("AndroidDeck", saved.Organization);
             Assert.Equal("Developer", saved.Title);
-            Assert.Equal("walid@example.com", saved.Email);
-            Assert.Equal("+96179124237", saved.PrimaryPhoneNumber);
+            Assert.Equal("john.doe@example.com", saved.Email);
+            Assert.Equal("+15550100237", saved.PrimaryPhoneNumber);
         }
         finally
         {

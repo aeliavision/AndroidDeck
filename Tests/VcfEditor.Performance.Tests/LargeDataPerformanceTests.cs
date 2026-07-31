@@ -132,7 +132,7 @@ public sealed class LargeDataPerformanceTests
             builder.AppendLine("VERSION:3.0");
             builder.Append("N:User;").Append(index).AppendLine(";;;");
             builder.Append("FN:Contact ").Append(index).AppendLine();
-            builder.Append("TEL;CELL:+961700").Append(index.ToString("D4", System.Globalization.CultureInfo.InvariantCulture)).AppendLine();
+            builder.Append("TEL;CELL:+1555010").Append(index.ToString("D4", System.Globalization.CultureInfo.InvariantCulture)).AppendLine();
             builder.AppendLine("END:VCARD");
         }
         return builder.ToString();
