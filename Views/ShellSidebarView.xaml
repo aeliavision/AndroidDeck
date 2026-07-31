@@ -57,6 +57,10 @@
                         <TextBlock Text="Secure local device manager"
                                    Style="{StaticResource Shell.SidebarSubtitleText}"
                                    Margin="0,2,0,0" />
+                        <TextBlock Text="Created by Walid Salameh"
+                                   Style="{StaticResource Shell.SidebarSubtitleText}"
+                                   Opacity="0.7"
+                                   Margin="0,2,0,0" />
                     </StackPanel>
 
                     <Button Grid.Column="1"

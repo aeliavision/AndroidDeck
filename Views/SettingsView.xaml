@@ -27,6 +27,7 @@
                             <TextBlock Text="Application" Style="{StaticResource TitleText}"/>
                             <TextBlock Text="{x:Static app:Constants.AppName}" Style="{StaticResource BodyText}" FontWeight="SemiBold" Margin="0,8,0,0"/>
                             <TextBlock Text="{x:Static app:Constants.AppVersion}" Style="{StaticResource CaptionText}" Margin="0,4,0,0"/>
+                            <TextBlock Text="Created by Walid Salameh" Style="{StaticResource CaptionText}" Margin="0,4,0,0" Opacity="0.7"/>
                         </StackPanel>
                     </Border>
 

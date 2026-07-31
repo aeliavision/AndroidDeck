@@ -4,6 +4,8 @@
 
 # AndroidDeck
 
+**Created by Walid Salameh**
+
 AndroidDeck is a secure, local device manager that allows you to seamlessly manage, view, and edit your Android contacts, files, and media directly from your Windows PC. It consists of a beautiful, premium Windows desktop application (WPF) and an Android companion app that communicate locally over your Wi-Fi network without relying on cloud services.
 
 ## Features
